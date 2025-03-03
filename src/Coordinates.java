@@ -10,10 +10,6 @@ public class Coordinates {
                 '}';
     }
 
-    public Coordinates(float x, Integer y) {
-        this.x = x;
-        this.y = y;
-    }
 
     public float getX() {
         return x;

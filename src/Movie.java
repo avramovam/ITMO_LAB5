@@ -12,18 +12,6 @@ public class Movie implements Comparable<Movie>{
     private MpaaRating mpaaRating; //Поле может быть null
     private Person director; //Поле может быть null
 
-    public Movie(Long id, String name, Coordinates coordinates, LocalDate creationDate, int oscarsCount, long length, MovieGenre genre, Person director, MpaaRating mpaaRating) {
-        this.id = id;
-        this.name = name;
-        this.coordinates = coordinates;
-        this.creationDate = creationDate;
-        this.oscarsCount = oscarsCount;
-        this.length = length;
-        this.genre = genre;
-        this.director = director;
-        this.mpaaRating = mpaaRating;
-    }
-
     // Метод для сравнения Movie по имени (для PriorityQueue)
     @Override
     public int compareTo(Movie other) {
