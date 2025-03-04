@@ -68,6 +68,9 @@ public class Movie implements Comparable<Movie>{
     }
 
     public void setName(String name) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Название фильма не может быть пустым. Повторите ввод.");
+        }
         this.name = name;
     }
 

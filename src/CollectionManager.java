@@ -62,7 +62,6 @@ public class CollectionManager {
     public void showCollection() {
         if (movieCollection.isEmpty()) {
             System.out.println("Коллекция пуста");
-            return;
         } else {
             for (Movie movie : movieCollection) {
                 System.out.println(movie);

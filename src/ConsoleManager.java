@@ -1,3 +1,7 @@
+
+import javax.sound.sampled.Control;
+import java.lang.reflect.Type;
+import java.text.ListFormat;
 import java.util.*;
 
 public class ConsoleManager {
@@ -42,10 +46,69 @@ public class ConsoleManager {
     }
 
     public Movie readMovieFromConsole() {
-        try {
+        InputRequest[] requests = {
+                new InputRequest("Введите название фильма: ", String.class, s -> s, "name"),
+                new InputRequest("Введите координату X: ", Float.class, s -> {
+                    try {
+                        return Float.parseFloat(s);
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                }, "x"),
+                new InputRequest("Введите координату Y: ", Integer.class, s -> Integer.parseInt(s), "y")
+        };
+        Movie newMovie = new Movie();
+        Coordinates coordinates = new Coordinates();
+
+        for (InputRequest request : requests) {
+            Object value = null;
+            boolean validCommand = false;
+
+            while (!validCommand) {
+                System.out.print(request.getPrompt());
+                String line = scanner.nextLine().trim();
+
+                value = request.parseInput(line);
+
+                switch (request.getFieldName()) {
+                    case "name":
+                        try {
+                            newMovie.setName((String) value);
+                            validCommand = true;
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+
+                        case "x":
+                            try {
+                                if (value != null) {
+                                    coordinates.setX((Float) value);
+                                    validCommand = true;
+                                } else if (value == null && line.isEmpty()) {
+                                    validCommand = true;
+                                } else {
+                                    System.out.println("Неправильный формат ввода. Координата X может принимать значения типа Float");
+                                }
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                            break;
+                }
+
+
+                }
+            }
+
+
+
+
+
+
+        /*try {
             System.out.print("Введите название фильма: ");
             String name = scanner.nextLine().trim();
-            if (name == null || name.isEmpty()) {
+            if (name.isEmpty()) {
                 throw new IllegalArgumentException("Название фильма не может быть пустым.");
             }
 
@@ -69,114 +132,12 @@ public class ConsoleManager {
             throw new IllegalArgumentException("Некорректный формат ввода. Повторите ввод.");
         } catch (IllegalArgumentException e) {
             throw e;
-        }
+        }*/
+        return newMovie;
     }
 
     public Collection<Command> getCommands() {
         return commandMap.values();
     }
-
-    /*
-    private void addMovie() {
-        try {
-            System.out.print("Введите название фильма: ");
-            String name = scanner.nextLine().trim();
-            if (name == null || name.isEmpty()) {
-                throw new IllegalArgumentException("Название фильма не может быть пустым.");
-            }
-
-            System.out.print("Введите координату X: ");
-            Float x = Float.parseFloat(scanner.nextLine().trim());
-
-            System.out.print("Введите координату Y: ");
-            Integer y = Integer.parseInt(scanner.nextLine().trim());
-
-            Coordinates coordinates = new Coordinates();
-            coordinates.setX(x);
-            coordinates.setY(y);
-
-            // ... Запрашиваем остальные поля и создаем объект Movie
-            Movie newMovie = new Movie();
-            newMovie.setName(name);
-            newMovie.setCoordinates(coordinates);
-            // Установка остальных полей для newMovie
-
-            collectionManager.addMovie(newMovie);
-            System.out.println("Фильм успешно добавлен.");
-
-        } catch (NumberFormatException e) {
-            System.out.println("Некорректный формат числа. Повторите ввод.");
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage()); // Выводим сообщение об ошибке валидации
-        }
-    }
-
-    private void removeMovieById(String idStr) {
-        try {
-            Long id = Long.parseLong(idStr);
-            collectionManager.removeMovieById(id);
-            System.out.println("Фильм с ID " + id + " удален.");
-        } catch (NumberFormatException e) {
-            System.out.println("Некорректный формат ID. Введите целое число.");
-        }
-    }
-
-    private void updateMovieById(String idStr) {
-        try {
-            Long id = Long.parseLong(idStr);
-            // Запросите у пользователя новые данные для фильма
-            System.out.println("Введите новые данные для фильма с ID " + id);
-
-            // Запросите новые значения для полей фильма, как в методе addMovie()
-            // Создайте новый объект Movie с этими значениями
-
-            Movie updatedMovie = new Movie(); // Заполните поля updatedMovie
-
-            collectionManager.updateMovieById(id, updatedMovie);
-            System.out.println("Фильм с ID " + id + " успешно обновлен.");
-
-        } catch (NumberFormatException e) {
-            System.out.println("Некорректный формат ID. Введите целое число.");
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-
-
-    private void clearCollection() {
-        collectionManager.clearCollection();
-        System.out.println("Коллекция очищена.");
-    }
-
-    private void showHelp() {
-        System.out.println("Доступные команды:");
-        System.out.println("  help : вывести справку по доступным командам");
-        System.out.println("  info : вывести информацию о коллекции");
-        System.out.println("  show : вывести все элементы коллекции");
-        System.out.println("  add : добавить новый элемент в коллекцию");
-        System.out.println("  remove_by_id {id} : удалить элемент с указанным ID");
-        System.out.println("  update_id {id} : обновить элемент с указанным ID");
-        System.out.println("  clear : очистить коллекцию");
-        System.out.println("  exit : завершить программу");
-        // ...
-    }
-
-    private void showInfo() {
-        System.out.println("Тип коллекции: PriorityQueue");
-        System.out.println("Количество элементов: " + collectionManager.getMovieCollection().size());
-    }
-
-    private void showCollection() {
-        PriorityQueue<Movie> movies = collectionManager.getMovieCollection();
-        if (movies.isEmpty()) {
-            System.out.println("Коллекция пуста.");
-            return;
-        }
-        for (Movie movie : movies) {
-            System.out.println(movie);
-        }
-    }
-     */
 }
 
