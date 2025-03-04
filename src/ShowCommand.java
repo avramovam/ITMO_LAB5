@@ -12,6 +12,6 @@ public class ShowCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "show: вывести все элементы коллекции";
+        return "show : вывести все элементы коллекции";
     }
 }

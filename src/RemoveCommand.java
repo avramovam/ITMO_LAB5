@@ -14,7 +14,6 @@ public class RemoveCommand implements Command {
             }
             Long id = Long.parseLong(argument);
             collectionManager.removeMovieById(id);
-            System.out.println("Фильм с ID " + id + " удален.");
         } catch (NumberFormatException e) {
             System.out.println("Некорректный формат ввода ID. Введите целое число");
         }
@@ -22,6 +21,6 @@ public class RemoveCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "remove_by_id {id}: удалить элемент с указанным ID";
+        return "remove_by_id {id} : удалить элемент с указанным ID";
     }
 }

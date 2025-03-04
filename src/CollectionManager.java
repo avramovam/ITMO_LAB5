@@ -1,16 +1,30 @@
 import java.io.*;
+import java.util.Date;
 import java.util.PriorityQueue;
 
 public class CollectionManager {
     private PriorityQueue<Movie> movieCollection;
     private Long nextId = 1L;
+    private Date initializationDate;
 
     public CollectionManager() {
         movieCollection = new PriorityQueue<>();
+        this.initializationDate = new Date();
     }
 
     public PriorityQueue<Movie> getMovieCollection() {
         return movieCollection;
+    }
+    public String getCollectionType() {
+        return "java.util.PriorityQueue<Movie>";
+    }
+
+    public int getSize() {
+        return movieCollection.size();
+    }
+
+    public Date getInitializationDate() {
+        return initializationDate;
     }
 
     public void addMovie(Movie movie) {
@@ -20,13 +34,23 @@ public class CollectionManager {
 
     public void updateMovieById(Long id, Movie newMovie) {
         // поиск фильма по id, удаление и добавление нового по тому же id
-        movieCollection.removeIf(movie -> movie.getId().equals(id));
+        /*
+        if (movieCollection.removeIf(movie -> movie.getId().equals(id))){;
+            newMovie.setId(id);
+            movieCollection.add(newMovie);
+        } else {
+            System.out.println("Фильм с ID " + id + " не найден.");
+        }*/
         newMovie.setId(id);
         movieCollection.add(newMovie);
     }
 
     public void removeMovieById(Long id) {
-        movieCollection.removeIf(movie -> movie.getId().equals(id));
+        if (!movieCollection.removeIf(movie -> movie.getId().equals(id))) {
+            System.out.println("Фильм с ID " + id + " не найден.");
+        } else {
+            System.out.println("Фильм с ID " + id + " удален.");
+        }
     }
 
     // очищение коллекции и сброс счетчика

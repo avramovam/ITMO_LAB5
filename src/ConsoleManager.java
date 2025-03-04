@@ -1,7 +1,5 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.*;
+
 public class ConsoleManager {
     private CollectionManager collectionManager;
     private Scanner scanner;
@@ -15,6 +13,10 @@ public class ConsoleManager {
         commandMap.put("add", new AddCommand(collectionManager, this));
         commandMap.put("show", new ShowCommand(collectionManager));
         commandMap.put("remove", new RemoveCommand(collectionManager));
+        commandMap.put("clear", new ClearCommand(collectionManager));
+        commandMap.put("help", new HelpCommand(this));
+        commandMap.put("info", new InfoCommand(collectionManager));
+        commandMap.put("update", new UpdateCommand(collectionManager, this));
 
     }
 
@@ -69,6 +71,11 @@ public class ConsoleManager {
             throw e;
         }
     }
+
+    public Collection<Command> getCommands() {
+        return commandMap.values();
+    }
+
     /*
     private void addMovie() {
         try {
