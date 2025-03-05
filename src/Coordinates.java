@@ -27,8 +27,8 @@ public class Coordinates {
     }
 
     public void setY(Integer y) {
-        if (y <= -177 || y == null) {
-            throw new IllegalArgumentException("Y координата не может быть null и больше -177");
+        if (y <= -177) {
+            throw new IllegalArgumentException("Y координата не может быть меньше -177");
         }
         this.y = y;
     }

@@ -87,6 +87,9 @@ public class Movie implements Comparable<Movie>{
     }
 
     public void setOscarsCount(int oscarsCount) {
+        if (oscarsCount <= 0) {
+            throw new IllegalArgumentException("Количество оскаров должно быть больше 0");
+        }
         this.oscarsCount = oscarsCount;
     }
 
@@ -95,14 +98,21 @@ public class Movie implements Comparable<Movie>{
     }
 
     public void setLength(long length) {
+        if (length <= 0) {
+            throw new IllegalArgumentException("Длина должна быть больше 0");
+        }
         this.length = length;
     }
 
     public MovieGenre getGenre() {
+
         return genre;
     }
 
     public void setGenre(MovieGenre genre) {
+        if (genre == null) {
+            throw new IllegalArgumentException("Жанр не может быть пустым. Повторите ввод");
+        }
         this.genre = genre;
     }
 
@@ -111,6 +121,9 @@ public class Movie implements Comparable<Movie>{
     }
 
     public void setMpaaRating(MpaaRating mpaaRating) {
+        if (mpaaRating == null) {
+            throw new IllegalArgumentException("Рейтинг не может быть пустым. Повторите ввод");
+        }
         this.mpaaRating = mpaaRating;
     }
 

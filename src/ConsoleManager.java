@@ -1,8 +1,7 @@
 
-import javax.sound.sampled.Control;
-import java.lang.reflect.Type;
-import java.text.ListFormat;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.time.LocalDate;
 
 public class ConsoleManager {
     private CollectionManager collectionManager;
@@ -46,95 +45,189 @@ public class ConsoleManager {
     }
 
     public Movie readMovieFromConsole() {
-        InputRequest[] requests = {
-                new InputRequest("Введите название фильма: ", String.class, s -> s, "name"),
-                new InputRequest("Введите координату X: ", Float.class, s -> {
-                    try {
-                        return Float.parseFloat(s);
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                }, "x"),
-                new InputRequest("Введите координату Y: ", Integer.class, s -> Integer.parseInt(s), "y")
-        };
+        Map<String, Integer> requestMap = new LinkedHashMap<>();
+        requestMap.put("Введите название фильма: ", 1);
+        requestMap.put("Введите координату X: ", 2);
+        requestMap.put("Введите координату Y: ", 3);
+        requestMap.put("Введите количество Оскаров: ", 4);
+        requestMap.put("Введите длину: ", 5);
+        requestMap.put("Введите жанр (DRAMA, COMEDY, ADVENTURE, HORROR, FANTASY): ", 6);
+        requestMap.put("Введите рейтинг (G, R, NC_17): ", 7);
+
+
         Movie newMovie = new Movie();
         Coordinates coordinates = new Coordinates();
 
-        for (InputRequest request : requests) {
-            Object value = null;
+        newMovie.setCreationDate(LocalDate.now());
+
+        for (String request : requestMap.keySet()) {
             boolean validCommand = false;
 
             while (!validCommand) {
-                System.out.print(request.getPrompt());
+                System.out.print(request);
                 String line = scanner.nextLine().trim();
 
-                value = request.parseInput(line);
-
-                switch (request.getFieldName()) {
-                    case "name":
+                switch (requestMap.get(request)) {
+                    case 1:
                         try {
-                            newMovie.setName((String) value);
+                            newMovie.setName(line);
                             validCommand = true;
+                            System.out.println("Введите координаты");
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
                         break;
 
-                        case "x":
+                    case 2:
+                        if (readX(line)) {
                             try {
-                                if (value != null) {
-                                    coordinates.setX((Float) value);
-                                    validCommand = true;
-                                } else if (value == null && line.isEmpty()) {
-                                    validCommand = true;
-                                } else {
-                                    System.out.println("Неправильный формат ввода. Координата X может принимать значения типа Float");
+                                if (!line.isEmpty()) {
+                                    coordinates.setX(Float.parseFloat(line));
                                 }
+                                validCommand = true;
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
-                            break;
-                }
+                        }
+                        break;
 
+                    case 3:
+                        if (readY(line)) {
+                            try {
+                                coordinates.setY(Integer.parseInt(line));
+                                newMovie.setCoordinates(coordinates);
+                                validCommand = true;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        break;
 
+                    case 4:
+                        if (readOscar(line)) {
+                            try {
+                                newMovie.setOscarsCount(Integer.parseInt(line));
+                                validCommand = true;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        if (readLength(line)) {
+                            try {
+                                newMovie.setLength(Long.parseLong(line));
+                                validCommand = true;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        break;
+
+                    case 6:
+                        if (readEnum(line, "Genre")) {
+                            try {
+                                line = line.toUpperCase();
+                                newMovie.setGenre(MovieGenre.valueOf(line));
+                                validCommand = true;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        break;
+
+                    case 7:
+                        if (readEnum(line, "MpaaRating")) {
+                            try {
+                                line = line.toUpperCase();
+                                newMovie.setMpaaRating(MpaaRating.valueOf(line));
+                                validCommand = true;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        break;
                 }
             }
-
-
-
-
-
-
-        /*try {
-            System.out.print("Введите название фильма: ");
-            String name = scanner.nextLine().trim();
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException("Название фильма не может быть пустым.");
-            }
-
-            System.out.print("Введите координату X: ");
-            Float x = Float.parseFloat(scanner.nextLine().trim());
-
-            System.out.print("Введите координату Y: ");
-            Integer y = Integer.parseInt(scanner.nextLine().trim());
-
-            Coordinates coordinates = new Coordinates();
-            coordinates.setX(x);
-            coordinates.setY(y);
-
-            Movie newMovie = new Movie();
-            newMovie.setName(name);
-            newMovie.setCoordinates(coordinates);
-
-            return newMovie;
-
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Некорректный формат ввода. Повторите ввод.");
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }*/
+        }
         return newMovie;
     }
+
+    public Boolean readX(String input) {
+        Pattern floatPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        if (floatPattern.matcher(input).matches()) {
+            return true;
+        } else if (input.isEmpty()) {
+            return true;
+        } else {
+            System.out.println("Неправильный формат ввода. Координата X может принимать значения типа Float");
+            return false;
+        }
+    }
+
+
+    public Boolean readY(String input) {
+        Pattern intPattern = Pattern.compile("-?\\d+");
+        if (intPattern.matcher(input).matches()) {
+            return true;
+        } else if (input.isEmpty()) {
+            System.out.println("Y координата не может быть пустой");
+            return false;
+        } else {
+            System.out.println("Неправильный формат ввода. Y координата принимает значения типа Integer");
+            return false;
+        }
+    }
+
+    public Boolean readOscar(String input) {
+        Pattern intPattern = Pattern.compile("-?\\d+");
+        if (intPattern.matcher(input).matches()) {
+            return true;
+        } else if (input.isEmpty()) {
+            return true;
+        } else {
+            System.out.println("Неправильный формат ввода. Количество оскаров должно быть числом типа Integer");
+            return false;
+        }
+    }
+
+    public Boolean readLength(String input) {
+        Pattern intPattern = Pattern.compile("-?\\d+");
+        if (intPattern.matcher(input).matches()) {
+            return true;
+        } else if (input.isEmpty()) {
+            return true;
+        } else {
+            System.out.println("Неправильный формат ввода. Длина должна быть числом типа Long");
+            return false;
+        }
+    }
+
+    public Boolean readEnum(String input, String nameEnum) {
+        try {
+            if (input.isEmpty()) {
+                System.out.println("Неправильный формат ввода. Поле не может быть пустым");
+                return false;
+            } else {
+                input = input.toUpperCase();
+                if (Objects.equals(nameEnum, "Genre")){
+                    MovieGenre genre = MovieGenre.valueOf(input);
+                    return true;
+                } else if (Objects.equals(nameEnum, "MpaaRating")){
+                    MpaaRating rating = MpaaRating.valueOf(input);
+                    return true;
+                } else {
+                    System.out.println("Enum класс не найден");
+                    return false;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Неправильный формат ввода. Введите значение из списка");
+            return false;
+        }
+    }
+
 
     public Collection<Command> getCommands() {
         return commandMap.values();

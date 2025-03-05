@@ -1,5 +1,5 @@
 public class HelpCommand implements Command {
-    ConsoleManager consoleManager;
+    private ConsoleManager consoleManager;
 
     public HelpCommand(ConsoleManager consoleManager) {
         this.consoleManager = consoleManager;
