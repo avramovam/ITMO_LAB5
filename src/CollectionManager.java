@@ -71,6 +71,35 @@ public class CollectionManager {
         }
     }
 
+    public Movie removeHead() {
+        return movieCollection.poll();
+    }
+
+    public Movie findMinCoordinates() {
+        if (movieCollection.isEmpty()) {
+            return null;
+        }
+
+        Movie minMovie = movieCollection.peek();
+        for (Movie movie : movieCollection) {
+            if (compareCoordinates(movie.getCoordinates(), minMovie.getCoordinates()) < 0) {
+                minMovie = movie;
+            }
+        }
+        return minMovie;
+    }
+
+    private int compareCoordinates(Coordinates c1, Coordinates c2) {
+        int xComparison = c1.getX().compareTo(c2.getX());
+        int yComparison = c1.getY().compareTo(c2.getY());
+        if (xComparison != 0) {
+            return xComparison;
+        } if (yComparison != 0) {
+            return yComparison;
+        } else {
+            return 0;
+        }
+    }
 
     private String dataFilePath = "src/movies.csv"; // Путь к файлу с данными
 

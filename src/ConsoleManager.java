@@ -28,6 +28,8 @@ public class ConsoleManager {
         commandMap.put("update", new UpdateCommand(collectionManager, this));
         commandMap.put("save", new SaveCommand(collectionManager));
         commandMap.put("exit", new ExitCommand());
+        commandMap.put("remove_head", new RemoveHeadCommand(collectionManager));
+        commandMap.put("min_by_coordinates", new MinByCoordinatesCommand(collectionManager));
 
 
     }
