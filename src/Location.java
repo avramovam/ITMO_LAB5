@@ -1,22 +1,16 @@
+import java.util.Objects;
+
 public class Location {
     private Integer x; //Поле не может быть null
     private Long y; //Поле не может быть null
     private String name; //Поле может быть null
 
-    public Location(Integer x, Long y, String name) {
-        this.x = x;
-        this.y = y;
-        this.name = name;
-    }
 
     public Integer getX() {
         return x;
     }
 
     public void setX(Integer x) {
-        if (x == null) {
-            throw new IllegalArgumentException("X cannot be null");
-        }
         this.x = x;
     }
 
@@ -25,9 +19,6 @@ public class Location {
     }
 
     public void setY(Long y) {
-        if (y == null) {
-            throw new IllegalArgumentException("Y cannot be null");
-        }
         this.y = y;
     }
 
@@ -36,9 +27,28 @@ public class Location {
     }
 
     public void setName(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name cannot be null");
-        }
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "x=" + x +
+                ", y=" + y +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return Objects.equals(x, location.x) && Objects.equals(y, location.y) && Objects.equals(name, location.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, name);
     }
 }

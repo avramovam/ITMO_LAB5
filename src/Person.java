@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Person {
@@ -5,19 +7,13 @@ public class Person {
     private String passportID; //Значение этого поля должно быть уникальным, Поле не может быть null
     private Location location; //Поле не может быть null
 
-    public Person(String name, String passportID, Location location) {
-        this.name = name;
-        this.passportID = passportID;
-        this.location = location;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Имя не может быть пустым. Повторите ввод.");
         }
         this.name = name;
     }
@@ -27,8 +23,8 @@ public class Person {
     }
 
     public void setPassportID(String passportID) {
-        if (passportID == null) {
-            throw new IllegalArgumentException("PassportID cannot be null");
+        if (passportID.isEmpty()) {
+            throw new IllegalArgumentException("PassportID не может быть пустым. Повторите ввод.");
         }
         this.passportID = passportID;
     }

@@ -11,7 +11,7 @@ public class Coordinates {
     }
 
 
-    public float getX() {
+    public Float getX() {
         return x;
     }
 

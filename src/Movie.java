@@ -105,7 +105,6 @@ public class Movie implements Comparable<Movie>{
     }
 
     public MovieGenre getGenre() {
-
         return genre;
     }
 
@@ -134,6 +133,5 @@ public class Movie implements Comparable<Movie>{
     public void setDirector(Person director) {
         this.director = director;
     }
-
 
 }
