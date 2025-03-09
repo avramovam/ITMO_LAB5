@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class CountGreaterThanGenreCommand implements Command {
     private CollectionManager collectionManager;
 
-    public CountGreaterThanGenreCommand(CollectionManager collectionManager, Scanner scanner) {
+    public CountGreaterThanGenreCommand(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
     }
 

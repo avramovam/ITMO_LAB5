@@ -11,6 +11,8 @@ public class CollectionManager {
     private Long nextId = 1L;
     private Date initializationDate;
     private ArrayList<String> directorsID;
+    private boolean isCollectionModified = false;
+
 
     public CollectionManager() {
         movieCollection = new PriorityQueue<>();
@@ -20,6 +22,10 @@ public class CollectionManager {
 
     public PriorityQueue<Movie> getMovieCollection() {
         return movieCollection;
+    }
+
+    public boolean isCollectionModified() {
+        return isCollectionModified;
     }
 
     public ArrayList<String> getListPassportID() {
@@ -50,12 +56,13 @@ public class CollectionManager {
             movie.setId(nextId++);
             movieCollection.add(movie);
         }
-
+        isCollectionModified = true;
     }
 
     public void updateMovieById(Long id, Movie newMovie) {
         newMovie.setId(id);
         movieCollection.add(newMovie);
+        isCollectionModified = true;
     }
 
     public void removeMovieById(Long id) {
@@ -63,12 +70,15 @@ public class CollectionManager {
             System.out.println("Фильм с ID " + id + " не найден.");
         } else {
             System.out.println("Фильм с ID " + id + " удален.");
+            isCollectionModified = true;
         }
+
     }
 
     public void clearCollection() {
         movieCollection.clear();
         nextId = 1L;
+        isCollectionModified = true;
     }
 
     public void showCollection() {
@@ -84,6 +94,7 @@ public class CollectionManager {
     }
 
     public Movie removeHead() {
+        isCollectionModified = true;
         return movieCollection.poll();
     }
 
@@ -129,16 +140,17 @@ public class CollectionManager {
 
     public boolean isMovieMinimal(Movie movie) {
         if (movieCollection.isEmpty()) {
+            isCollectionModified = true;
             return true;
         }
-
+        isCollectionModified = true;
         Movie minMovie = movieCollection.peek();
-        System.out.println(movieCollection);
         return movie.compareTo(minMovie) < 0;
     }
 
     public void removeGreater(Movie movieToCompare) {
         Iterator<Movie> iterator = movieCollection.iterator();
+        isCollectionModified = true;
         while (iterator.hasNext()) {
             Movie movie = iterator.next();
             if (movie.compareTo(movieToCompare) > 0) {
@@ -151,22 +163,35 @@ public class CollectionManager {
         return movieCollection.stream().filter(movie -> movie.getGenre().compareTo(movieGenre) > 0).count();
     }
 
-    private final String dataFilePath = "src/app/movies.csv"; // Путь к файлу с данными
+    private final String dataFilePath = "src/app/movies.csv";// Путь к файлу с данными
+    private final String emergencyFilePath = "src/app/emergencies.csv"; // Путь для данных при аварийном завершении
 
-    public void saveDataToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFilePath))) {
+    public void saveDataToFile(String isEmergency) {
+        String filePath;
+        if (isEmergency.equals("+")) {
+            filePath = emergencyFilePath;
+        } else {
+            filePath = dataFilePath;
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Movie movie : movieCollection) {
                 writer.write(convertToCsv(movie));
                 writer.newLine();
             }
-            System.out.println("Коллекция успешно сохранена в файл " + dataFilePath);
+            System.out.println("Коллекция успешно сохранена в файл");
         } catch (IOException e) {
             System.err.println("Ошибка при сохранении коллекции в файл: " + e.getMessage());
         }
     }
 
-    public void loadDataFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(dataFilePath))) {
+    public void loadDataFromFile(String isEmergency) {
+        String filePath;
+        if (isEmergency.equals("+")) {
+            filePath = emergencyFilePath;
+        } else {
+            filePath = dataFilePath;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 try {
@@ -176,9 +201,9 @@ public class CollectionManager {
                     System.err.println("Ошибка при чтении данных из файла: " + e.getMessage());
                 }
             }
-            System.out.println("Коллекция успешно загружена из файла " + dataFilePath);
+            System.out.println("Коллекция успешно загружена из файла.");
         } catch (FileNotFoundException e) {
-            System.out.println("Файл " + dataFilePath + " не найден. Будет создана новая коллекция.");
+            System.out.println("Файл " + filePath + " не найден. Будет создана новая коллекция.");
         } catch (IOException e) {
             System.err.println("Ошибка при чтении данных из файла: " + e.getMessage());
         }

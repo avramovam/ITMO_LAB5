@@ -11,7 +11,7 @@ public class SaveCommand implements Command {
 
     @Override
     public void execute(String argument) {
-        collectionManager.saveDataToFile();
+        collectionManager.saveDataToFile("-");
     }
 
     @Override

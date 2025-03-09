@@ -3,6 +3,7 @@ package app;
 import commands.*;
 import modules.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.time.LocalDate;
@@ -10,9 +11,10 @@ import java.time.LocalDate;
 public class ConsoleManager {
     private CollectionManager collectionManager;
     private Scanner scanner;
-    private Map<String, Command> commandMap;
+    private final Map<String, Command> commandMap;
     private final Pattern intPattern;
     private final Pattern floatPattern;
+    private boolean isEmergencyShutdown;
 
 
     public ConsoleManager(CollectionManager collectionManager) {
@@ -21,23 +23,25 @@ public class ConsoleManager {
         this.commandMap = new LinkedHashMap<>();
         this.intPattern = Pattern.compile("-?\\d+");
         this.floatPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        this.isEmergencyShutdown = new File("src/app/emergencies.csv").length() != 0;
+
 
 
         commandMap.put("add", new AddCommand(collectionManager, this));
         commandMap.put("show", new ShowCommand(collectionManager));
-        commandMap.put("remove", new RemoveCommand(collectionManager));
+        commandMap.put("remove_by_id", new RemoveCommand(collectionManager));
         commandMap.put("clear", new ClearCommand(collectionManager));
         commandMap.put("help", new HelpCommand(this));
         commandMap.put("info", new InfoCommand(collectionManager));
         commandMap.put("update", new UpdateCommand(collectionManager, this));
         commandMap.put("save", new SaveCommand(collectionManager));
-        commandMap.put("exit", new ExitCommand());
+        commandMap.put("exit", new ExitCommand(collectionManager, scanner));
         commandMap.put("remove_head", new RemoveHeadCommand(collectionManager));
         commandMap.put("min_by_coordinates", new MinByCoordinatesCommand(collectionManager));
         commandMap.put("max_by_id", new MaxByIdCommand(collectionManager));
         commandMap.put("add_if_min", new AddIfMinCommand(collectionManager, this));
         commandMap.put("remove_greater", new RemoveGreaterCommand(this, collectionManager));
-        commandMap.put("count_greater_than_genre", new CountGreaterThanGenreCommand(collectionManager, scanner));
+        commandMap.put("count_greater_than_genre", new CountGreaterThanGenreCommand(collectionManager));
         commandMap.put("execute_script", new ExecuteScriptCommand(this, collectionManager));
 
     }
@@ -50,7 +54,28 @@ public class ConsoleManager {
         this.scanner = scanner;
     }
 
+    public void emergencyShutdown() {
+        System.out.println("Аварийное завершение работы.");
+        collectionManager.saveDataToFile("+");
+    }
     public void startInteractiveMode() {
+        if (isEmergencyShutdown) {
+            System.out.print("Хотите продолжить работу с несохраненными данными? (+/-)" );
+            String line = scanner.nextLine().trim();
+            if (line.equals("+")) {
+                collectionManager.loadDataFromFile("+");
+                System.out.println("Восстановленная коллекция: ");
+                collectionManager.showCollection();
+                try (FileWriter _ = new FileWriter("src/app/emergencies.csv", false)){}
+                catch (IOException e) {
+                    System.out.println("Ошибка при очистке файла " + e.getMessage());
+                }
+            } else {
+                collectionManager.loadDataFromFile("-");
+            }
+        } else {
+            collectionManager.loadDataFromFile("-");
+        }
         while (true) {
             System.out.print("Введите команду: ");
             String line = scanner.nextLine().trim();
