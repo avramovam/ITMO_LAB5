@@ -7,6 +7,7 @@ import modules.Movie;
 public class AddIfMinCommand implements Command {
     private CollectionManager collectionManager;
     private ConsoleManager consoleManager;
+    private String[] movieData;
 
     public AddIfMinCommand(CollectionManager collectionManager, ConsoleManager consoleManager) {
         this.consoleManager = consoleManager;
@@ -16,7 +17,12 @@ public class AddIfMinCommand implements Command {
     @Override
     public void execute(String argument) {
         try {
-            Movie newMovie = consoleManager.readMovieFromConsole();
+            Movie newMovie;
+            if (movieData != null && movieData.length > 0) {
+                newMovie = consoleManager.readMovieFromArguments(movieData);
+            } else {
+                newMovie = consoleManager.readMovieFromConsole();
+            }
 
             if (collectionManager.isMovieMinimal(newMovie)) {
                 collectionManager.addMovie(newMovie, false);
@@ -32,5 +38,9 @@ public class AddIfMinCommand implements Command {
     @Override
     public String getDescription() {
         return "add_if_min {element} : добавить новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции";
+    }
+
+    public void setMovieData(String[] movieData) {
+        this.movieData = movieData;
     }
 }

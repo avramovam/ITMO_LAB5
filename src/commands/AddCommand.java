@@ -7,6 +7,7 @@ import modules.Movie;
 public class AddCommand implements Command {
     private CollectionManager collectionManager;
     private ConsoleManager consoleManager;
+    private String[] movieData;
 
     public AddCommand(CollectionManager collectionManager, ConsoleManager consoleManager) {
         this.collectionManager = collectionManager;
@@ -15,16 +16,25 @@ public class AddCommand implements Command {
     @Override
     public void execute(String argument) {;
         try {
-            Movie newMovie = consoleManager.readMovieFromConsole();
+            Movie newMovie;
+            if (movieData != null && movieData.length > 0) {
+                newMovie = consoleManager.readMovieFromArguments(movieData);
+            } else {
+                newMovie = consoleManager.readMovieFromConsole();
+            }
             collectionManager.addMovie(newMovie, false);
             System.out.println("Фильм успешно добавлен.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("Содержится ошибка в веденных данных.");
         }
     }
 
     @Override
     public String getDescription() {
         return "add {element} : добавить новый элемент в коллекцию";
+    }
+
+    public void setMovieData(String[] movieData) {
+        this.movieData = movieData;
     }
 }

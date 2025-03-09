@@ -7,6 +7,7 @@ import modules.Movie;
 public class UpdateCommand implements Command {
     private CollectionManager collectionManager;
     private ConsoleManager consoleManager;
+    private String[] movieData;
 
     public UpdateCommand(CollectionManager collectionManager , ConsoleManager consoleManager) {
         this.collectionManager = collectionManager;
@@ -24,7 +25,12 @@ public class UpdateCommand implements Command {
             if (!collectionManager.getMovieCollection().removeIf(movie -> movie.getId().equals(id))) {
                 System.out.println("Фильм с таким ID не найден.");
             } else {;
-                Movie newMovie = consoleManager.readMovieFromConsole();
+                Movie newMovie;
+                if (movieData != null && movieData.length > 0) {
+                    newMovie = consoleManager.readMovieFromArguments(movieData);
+                } else {
+                    newMovie = consoleManager.readMovieFromConsole();
+                }
                 collectionManager.updateMovieById(id, newMovie);
                 System.out.println("Фильм с ID " + id + " обновлен");
             }
@@ -36,6 +42,10 @@ public class UpdateCommand implements Command {
     @Override
     public String getDescription() {
         return "update id {element} : обновить значение элемента коллекции, id которого равен заданному";
+    }
+
+    public void setMovieData(String[] movieData) {
+        this.movieData = movieData;
     }
 }
 

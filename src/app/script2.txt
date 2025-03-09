@@ -1,0 +1,3 @@
+clear
+execute_script /Users/macbook/Desktop/лабы/Java/Lab5/src/app/script1.txt
+info

@@ -170,7 +170,7 @@ public class CollectionManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 try {
-                    Movie movie = convertFromCsv(line);
+                    Movie movie = convertFromCsv(line.split(","));
                     addMovie(movie, true);
                 } catch (IllegalArgumentException e) {
                     System.err.println("Ошибка при чтении данных из файла: " + e.getMessage());
@@ -206,8 +206,7 @@ public class CollectionManager {
         }
     }
 
-    private Movie convertFromCsv(String line) {
-        String[] values = line.split(",");
+    public Movie convertFromCsv(String[] values) {
         if (values.length != 14 && values.length != 10) {
             throw new IllegalArgumentException("Неверный формат данных в файле.");
         }

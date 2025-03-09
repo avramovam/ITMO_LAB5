@@ -38,8 +38,16 @@ public class ConsoleManager {
         commandMap.put("add_if_min", new AddIfMinCommand(collectionManager, this));
         commandMap.put("remove_greater", new RemoveGreaterCommand(this, collectionManager));
         commandMap.put("count_greater_than_genre", new CountGreaterThanGenreCommand(collectionManager, scanner));
+        commandMap.put("execute_script", new ExecuteScriptCommand(this, collectionManager));
 
+    }
 
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
     }
 
     public void startInteractiveMode() {
@@ -60,6 +68,158 @@ public class ConsoleManager {
             } else {
                 System.out.println("Неизвестная команда. Введите 'help' для просмотра доступных команд.");
             }
+        }
+    }
+
+    public void processCommand(String line, String[] data) {
+        String[] parts = line.split("\\s+", 2);
+        String commandName = parts[0];
+        String argument = parts.length > 1 ? parts[1] : null;
+
+        Command command = commandMap.get(commandName);
+        if (command != null) {
+            try {
+                if (command instanceof AddCommand addCommand) {
+                    if (data != null && data.length > 0) {
+                        addCommand.setMovieData(data);
+                    }
+                }
+                if (command instanceof UpdateCommand updateCommand) {
+                    if (data != null && data.length > 0) {
+                        updateCommand.setMovieData(data);
+                    }
+                }
+                if (command instanceof AddIfMinCommand addIfMinCommand) {
+                    if (data != null && data.length > 0) {
+                        addIfMinCommand.setMovieData(data);
+                    }
+                }
+                if (command instanceof RemoveGreaterCommand removeGreaterCommand) {
+                    if (data != null && data.length > 0) {
+                        removeGreaterCommand.setMovieData(data);
+                    }
+                }
+                if (command instanceof UpdateCommand updateCommand) {
+                    if (data != null && data.length > 0) {
+                        updateCommand.setMovieData(data);
+                    }
+                }
+                command.execute(argument);
+            } catch (Exception e) {
+                System.out.println("Произошла ошибка при выполнении команды: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Неизвестная команда: " + commandName);
+        }
+    }
+
+    public Movie readMovieFromArguments(String[] values) {
+        /*try {
+            Movie movie = new Movie();
+            Person director = new Person();
+            Location directorLocation = new Location();
+            Coordinates coordinates = new Coordinates();
+
+            movie.setName(values[0].trim());
+            coordinates.setX(Float.parseFloat(values[1].trim()));
+            coordinates.setY(Integer.parseInt(values[2].trim()));
+            movie.setCoordinates(coordinates);
+            movie.setCreationDate(LocalDate.now());
+            movie.setOscarsCount(Integer.parseInt(values[3].trim()));
+            movie.setLength(Long.parseLong(values[4].trim()));
+            movie.setGenre(MovieGenre.valueOf(values[5].trim().toUpperCase()));
+            try{movie.setMpaaRating(MpaaRating.valueOf(values[6].trim().toUpperCase()));} catch (Exception _) {};
+            try{
+                director.setName(values[9]);
+                director.setPassportID(values[10]);
+                directorLocation.setX(Integer.parseInt(values[11]));
+                directorLocation.setY(Long.parseLong(values[12]));
+                director.setName(values[13]);
+                director.setLocation(directorLocation);
+                movie.setDirector(director);} catch (Exception _) {};
+
+            return movie;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Некорректный формат числа в файле.");
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }*/
+
+        try {
+            Movie newMovie = new Movie();
+            Person director = new Person();
+            Location directorLocation = new Location();
+            Coordinates coordinates = new Coordinates();
+            newMovie.setCreationDate(LocalDate.now());
+            Boolean validCommand = true;
+
+            newMovie.setName(values[0].trim());
+            if (readCoordinates(values[1].trim(), "X")) {
+                coordinates.setX(Float.parseFloat(values[1].trim()));
+            } else {
+                validCommand = false;
+            }
+            if (readCoordinates(values[2].trim(), "Y")) {
+                coordinates.setY(Integer.parseInt(values[2].trim()));
+                newMovie.setCoordinates(coordinates);
+            } else {
+                validCommand = false;
+            }
+            if (readOscarAndLength(values[3].trim())) {
+                newMovie.setOscarsCount(Integer.parseInt(values[3].trim()));
+            } else {
+                validCommand = false;
+            }
+            if (readOscarAndLength(values[4].trim())) {
+                newMovie.setLength(Long.parseLong(values[4].trim()));
+            } else {
+                validCommand = false;
+            }
+            if (readEnum(values[5].trim(), "Genre")) {
+                newMovie.setGenre(MovieGenre.valueOf(values[5].trim().toUpperCase()));
+            } else {
+                validCommand = false;
+            }
+            if (values.length >= 7 && readEnum(values[6].trim(), "modules.MpaaRating")) {
+                if (!values[6].trim().isEmpty()) {
+                    newMovie.setMpaaRating(MpaaRating.valueOf(values[6].trim().toUpperCase()));
+                }
+            }
+
+            if (values.length >= 12){
+                if (values[7].trim().isEmpty()) {
+                    director.setName(values[8].trim());
+                    if (readDirectorID(values[9].trim())) {
+                        director.setPassportID(values[9].trim());
+                        if (readCoordinates(values[10].trim(), "x")) {
+                            directorLocation.setX(Integer.parseInt(values[10].trim()));
+                            if (readCoordinates(values[11].trim(), "Y")) {
+                                directorLocation.setY(Long.parseLong(values[11].trim()));
+                                if (values.length == 13 && !(values[12].trim().isEmpty())) {
+                                    directorLocation.setName(values[12].trim());
+                                }
+                                director.setLocation(directorLocation);
+                                newMovie.setDirector(director);
+                                return newMovie;
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Команда для ввода данных о режиссера не распознана.");
+                }
+            } else if (values.length >= 8 && !values[7].trim().isEmpty()) {
+                System.out.println("Команда для ввода данных режиссера не распознана, а также недостаточно аргументов");
+            } else if (values.length >= 8 && values[7].trim().isEmpty()) {
+                System.out.println("Недостаточно аргументов для ввода данных о режиссере.");
+            }
+            if (validCommand) {
+                return newMovie;
+            } else {
+                throw new IllegalArgumentException("Ошибка в данных файла.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
         }
     }
 
@@ -152,8 +312,7 @@ public class ConsoleManager {
                     case "genre":
                         if (readEnum(line, "Genre")) {
                             try {
-                                line = line.toUpperCase();
-                                newMovie.setGenre(MovieGenre.valueOf(line));
+                                newMovie.setGenre(MovieGenre.valueOf(line.toUpperCase()));
                                 validCommand = true;
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
@@ -165,8 +324,7 @@ public class ConsoleManager {
                         if (readEnum(line, "modules.MpaaRating")) {
                             try {
                                 if (!line.isEmpty()) {
-                                    line = line.toUpperCase();
-                                    newMovie.setMpaaRating(MpaaRating.valueOf(line));
+                                    newMovie.setMpaaRating(MpaaRating.valueOf(line.toUpperCase()));
                                 }
                                 validCommand = true;
                             } catch (Exception e) {
@@ -293,7 +451,11 @@ public class ConsoleManager {
                 }
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Неправильный формат ввода. Введите значение из списка");
+            if (Objects.equals(nameEnum, "Genre")) {
+                System.out.println("Неправильный формат ввода жанра. Введенное значение должно быть из списка");
+            } else {
+                System.out.println("Неправильный формат ввода рейтинга. Введенное значение должно быть из списка");
+            }
             return false;
         }
     }
