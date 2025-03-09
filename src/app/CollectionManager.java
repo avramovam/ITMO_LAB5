@@ -1,10 +1,10 @@
-import com.sun.jdi.Value;
+package app;
+
+import modules.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class CollectionManager {
     private PriorityQueue<Movie> movieCollection;
@@ -27,7 +27,7 @@ public class CollectionManager {
     }
 
     public String getCollectionType() {
-        return "java.util.PriorityQueue<Movie>";
+        return "java.util.PriorityQueue<modules.Movie>";
     }
 
     public int getSize() {
@@ -38,9 +38,19 @@ public class CollectionManager {
         return initializationDate;
     }
 
-    public void addMovie(Movie movie) {
-        movie.setId(nextId++);
-        movieCollection.add(movie);
+    public void addMovie(Movie movie, Boolean isLoad) {
+        if (isLoad) {
+            movieCollection.add(movie);
+            for (Movie maxMovie : movieCollection) {
+                if (nextId <= maxMovie.getId()) {
+                    nextId = maxMovie.getId() + 1;
+                }
+            }
+        } else {
+            movie.setId(nextId++);
+            movieCollection.add(movie);
+        }
+
     }
 
     public void updateMovieById(Long id, Movie newMovie) {
@@ -65,7 +75,9 @@ public class CollectionManager {
         if (movieCollection.isEmpty()) {
             System.out.println("Коллекция пуста");
         } else {
-            for (Movie movie : movieCollection) {
+            List<Movie> movieList = new ArrayList<>(movieCollection);
+            movieList.sort(Comparator.comparing(Movie::getId));
+            for (Movie movie : movieList) {
                 System.out.println(movie);
             }
         }
@@ -101,7 +113,45 @@ public class CollectionManager {
         }
     }
 
-    private String dataFilePath = "src/movies.csv"; // Путь к файлу с данными
+
+    public Movie findMaxByID() {
+        if (movieCollection.isEmpty()) {
+            return null;
+        }
+        Movie maxMovie = movieCollection.peek();
+        for (Movie movie : movieCollection) {
+            if (movie.getId() > maxMovie.getId()) {
+                maxMovie = movie;
+            }
+        }
+        return maxMovie;
+    }
+
+    public boolean isMovieMinimal(Movie movie) {
+        if (movieCollection.isEmpty()) {
+            return true;
+        }
+
+        Movie minMovie = movieCollection.peek();
+        System.out.println(movieCollection);
+        return movie.compareTo(minMovie) < 0;
+    }
+
+    public void removeGreater(Movie movieToCompare) {
+        Iterator<Movie> iterator = movieCollection.iterator();
+        while (iterator.hasNext()) {
+            Movie movie = iterator.next();
+            if (movie.compareTo(movieToCompare) > 0) {
+                iterator.remove();
+            }
+        }
+    }
+
+    public long countGreaterThanGenre(MovieGenre movieGenre) {
+        return movieCollection.stream().filter(movie -> movie.getGenre().compareTo(movieGenre) > 0).count();
+    }
+
+    private final String dataFilePath = "src/app/movies.csv"; // Путь к файлу с данными
 
     public void saveDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFilePath))) {
@@ -121,7 +171,7 @@ public class CollectionManager {
             while ((line = reader.readLine()) != null) {
                 try {
                     Movie movie = convertFromCsv(line);
-                    addMovie(movie);
+                    addMovie(movie, true);
                 } catch (IllegalArgumentException e) {
                     System.err.println("Ошибка при чтении данных из файла: " + e.getMessage());
                 }

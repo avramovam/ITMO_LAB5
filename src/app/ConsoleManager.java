@@ -1,3 +1,7 @@
+package app;
+
+import commands.*;
+import modules.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -30,6 +34,10 @@ public class ConsoleManager {
         commandMap.put("exit", new ExitCommand());
         commandMap.put("remove_head", new RemoveHeadCommand(collectionManager));
         commandMap.put("min_by_coordinates", new MinByCoordinatesCommand(collectionManager));
+        commandMap.put("max_by_id", new MaxByIdCommand(collectionManager));
+        commandMap.put("add_if_min", new AddIfMinCommand(collectionManager, this));
+        commandMap.put("remove_greater", new RemoveGreaterCommand(this, collectionManager));
+        commandMap.put("count_greater_than_genre", new CountGreaterThanGenreCommand(collectionManager, scanner));
 
 
     }
@@ -99,9 +107,7 @@ public class ConsoleManager {
                     case "X":
                         if (readCoordinates(line, "X")) {
                             try {
-                                if (!line.isEmpty()) {
-                                    coordinates.setX(Float.parseFloat(line));
-                                }
+                                coordinates.setX(Float.parseFloat(line));
                                 validCommand = true;
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
@@ -124,9 +130,7 @@ public class ConsoleManager {
                     case "oskarCount":
                         if (readOscarAndLength(line)) {
                             try {
-                                if (!line.isEmpty()) {
-                                    newMovie.setOscarsCount(Integer.parseInt(line));
-                                }
+                                newMovie.setOscarsCount(Integer.parseInt(line));
                                 validCommand = true;
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
@@ -137,9 +141,7 @@ public class ConsoleManager {
                     case "length":
                         if (readOscarAndLength(line)) {
                             try {
-                                if (!line.isEmpty()) {
-                                    newMovie.setLength(Long.parseLong(line));
-                                }
+                                newMovie.setLength(Long.parseLong(line));
                                 validCommand = true;
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
@@ -160,7 +162,7 @@ public class ConsoleManager {
                         break;
 
                     case "rating":
-                        if (readEnum(line, "MpaaRating")) {
+                        if (readEnum(line, "modules.MpaaRating")) {
                             try {
                                 if (!line.isEmpty()) {
                                     line = line.toUpperCase();
@@ -269,7 +271,7 @@ public class ConsoleManager {
     public Boolean readEnum(String input, String nameEnum) {
         try {
             if (input.isEmpty()) {
-                if (Objects.equals(nameEnum, "MpaaRating")) {
+                if (Objects.equals(nameEnum, "modules.MpaaRating")) {
                     return true;
                 }
                 else {
@@ -282,7 +284,7 @@ public class ConsoleManager {
                 if (Objects.equals(nameEnum, "Genre")){
                     MovieGenre genre = MovieGenre.valueOf(input);
                     return true;
-                } else if (Objects.equals(nameEnum, "MpaaRating")){
+                } else if (Objects.equals(nameEnum, "modules.MpaaRating")){
                     MpaaRating rating = MpaaRating.valueOf(input);
                     return true;
                 } else {

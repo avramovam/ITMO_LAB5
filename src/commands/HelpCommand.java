@@ -1,3 +1,7 @@
+package commands;
+
+import app.ConsoleManager;
+
 public class HelpCommand implements Command {
     private ConsoleManager consoleManager;
 

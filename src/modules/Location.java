@@ -1,3 +1,5 @@
+package modules;
+
 import java.util.Objects;
 
 public class Location {
@@ -32,7 +34,7 @@ public class Location {
 
     @Override
     public String toString() {
-        return "Location{" +
+        return "modules.Location{" +
                 "x=" + x +
                 ", y=" + y +
                 ", name='" + name + '\'' +

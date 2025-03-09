@@ -1,10 +1,12 @@
+package modules;
+
 public class Coordinates {
     private float x; //Максимальное значение поля: 847
     private Integer y; //Значение поля должно быть больше -177, Поле не может быть null
 
     @Override
     public String toString() {
-        return "Coordinates{" +
+        return "modules.Coordinates{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';

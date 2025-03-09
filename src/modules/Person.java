@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+package modules;
+
 import java.util.Objects;
 
 public class Person {
@@ -35,14 +35,14 @@ public class Person {
 
     public void setLocation(Location location) {
         if (location == null) {
-            throw new IllegalArgumentException("Location cannot be null");
+            throw new IllegalArgumentException("modules.Location cannot be null");
         }
         this.location = location;
     }
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "modules.Person{" +
                 "name='" + name + '\'' +
                 ", passportID='" + passportID + '\'' +
                 ", location=" + location +

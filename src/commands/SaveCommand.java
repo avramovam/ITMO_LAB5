@@ -1,3 +1,7 @@
+package commands;
+
+import app.CollectionManager;
+
 public class SaveCommand implements Command {
     CollectionManager collectionManager;
 

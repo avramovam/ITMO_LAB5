@@ -1,4 +1,6 @@
-import java.util.NoSuchElementException;
+package commands;
+
+import app.CollectionManager;
 
 public class RemoveHeadCommand implements Command {
     private CollectionManager collectionManager;

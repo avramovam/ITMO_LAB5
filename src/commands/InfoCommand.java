@@ -1,3 +1,7 @@
+package commands;
+
+import app.CollectionManager;
+
 public class InfoCommand implements Command {
     private CollectionManager collectionManager;
 

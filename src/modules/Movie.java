@@ -1,3 +1,5 @@
+package modules;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -12,15 +14,19 @@ public class Movie implements Comparable<Movie>{
     private MpaaRating mpaaRating; //Поле может быть null
     private Person director; //Поле может быть null
 
-    // Метод для сравнения Movie по имени (для PriorityQueue)
+    // Метод для сравнения modules.Movie по имени (для PriorityQueue)
     @Override
     public int compareTo(Movie other) {
-        return this.name.compareTo(other.getName());
+        if (this.name.length() != other.name.length()) {
+            return Integer.compare(this.name.length(), other.name.length());
+        } else {
+            return Long.compare(this.length, other.length);
+        }
     }
 
     @Override
     public String toString() {
-        return "Movie{" +
+        return "modules.Movie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", coordinates=" + coordinates +

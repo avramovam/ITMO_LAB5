@@ -1,3 +1,9 @@
+package commands;
+
+import app.CollectionManager;
+import app.ConsoleManager;
+import modules.Movie;
+
 public class UpdateCommand implements Command {
     private CollectionManager collectionManager;
     private ConsoleManager consoleManager;

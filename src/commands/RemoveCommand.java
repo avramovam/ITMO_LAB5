@@ -1,3 +1,7 @@
+package commands;
+
+import app.CollectionManager;
+
 public class RemoveCommand implements Command {
     private CollectionManager collectionManager;
 

@@ -1,3 +1,9 @@
+package commands;
+
+import app.CollectionManager;
+import app.ConsoleManager;
+import modules.Movie;
+
 public class AddCommand implements Command {
     private CollectionManager collectionManager;
     private ConsoleManager consoleManager;
@@ -10,7 +16,7 @@ public class AddCommand implements Command {
     public void execute(String argument) {;
         try {
             Movie newMovie = consoleManager.readMovieFromConsole();
-            collectionManager.addMovie(newMovie);
+            collectionManager.addMovie(newMovie, false);
             System.out.println("Фильм успешно добавлен.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());

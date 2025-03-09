@@ -1,3 +1,5 @@
+package modules;
+
 public enum MpaaRating {
     G,
     R,

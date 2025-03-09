@@ -1,3 +1,8 @@
+package commands;
+
+import app.CollectionManager;
+import modules.Movie;
+
 public class MinByCoordinatesCommand implements Command {
     private CollectionManager collectionManager;
 
@@ -10,7 +15,7 @@ public class MinByCoordinatesCommand implements Command {
         Movie minMovie = collectionManager.findMinCoordinates();
 
         if (minMovie != null) {
-            System.out.println("Фильм с наименьшими координатами (" + minMovie.getCoordinates() + ") найден:" + minMovie.toString());
+            System.out.println("Фильм с наименьшими координатами (" + minMovie.getCoordinates() + ") найден: " + minMovie.toString());
         } else {
             System.out.println("Коллекция пуста.");
         }
