@@ -34,7 +34,7 @@ public class Location {
 
     @Override
     public String toString() {
-        return "modules.Location{" +
+        return "Location{" +
                 "x=" + x +
                 ", y=" + y +
                 ", name='" + name + '\'' +

@@ -23,7 +23,7 @@ public class ConsoleManager {
         this.commandMap = new LinkedHashMap<>();
         this.intPattern = Pattern.compile("-?\\d+");
         this.floatPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-        this.isEmergencyShutdown = new File("src/app/emergencies.csv").length() != 0;
+        this.isEmergencyShutdown = new File("src/resources/emergencies.csv").length() != 0;
 
 
 
@@ -66,7 +66,7 @@ public class ConsoleManager {
                 collectionManager.loadDataFromFile("+");
                 System.out.println("Восстановленная коллекция: ");
                 collectionManager.showCollection();
-                try (FileWriter _ = new FileWriter("src/app/emergencies.csv", false)){}
+                try (FileWriter _ = new FileWriter("src/resources/emergencies.csv", false)){}
                 catch (IOException e) {
                     System.out.println("Ошибка при очистке файла " + e.getMessage());
                 }
@@ -139,37 +139,6 @@ public class ConsoleManager {
     }
 
     public Movie readMovieFromArguments(String[] values) {
-        /*try {
-            Movie movie = new Movie();
-            Person director = new Person();
-            Location directorLocation = new Location();
-            Coordinates coordinates = new Coordinates();
-
-            movie.setName(values[0].trim());
-            coordinates.setX(Float.parseFloat(values[1].trim()));
-            coordinates.setY(Integer.parseInt(values[2].trim()));
-            movie.setCoordinates(coordinates);
-            movie.setCreationDate(LocalDate.now());
-            movie.setOscarsCount(Integer.parseInt(values[3].trim()));
-            movie.setLength(Long.parseLong(values[4].trim()));
-            movie.setGenre(MovieGenre.valueOf(values[5].trim().toUpperCase()));
-            try{movie.setMpaaRating(MpaaRating.valueOf(values[6].trim().toUpperCase()));} catch (Exception _) {};
-            try{
-                director.setName(values[9]);
-                director.setPassportID(values[10]);
-                directorLocation.setX(Integer.parseInt(values[11]));
-                directorLocation.setY(Long.parseLong(values[12]));
-                director.setName(values[13]);
-                director.setLocation(directorLocation);
-                movie.setDirector(director);} catch (Exception _) {};
-
-            return movie;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Некорректный формат числа в файле.");
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }*/
-
         try {
             Movie newMovie = new Movie();
             Person director = new Person();
@@ -277,139 +246,118 @@ public class ConsoleManager {
             while (!validCommand) {
                 System.out.print(request);
                 String line = scanner.nextLine().trim();
-
-                switch (requestMap.get(request)) {
-                    case "movieName":
-                        try {
+                try {
+                    switch (requestMap.get(request)) {
+                        case "movieName":
                             newMovie.setName(line);
                             validCommand = true;
                             System.out.println("Введите координаты");
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
-                        break;
+                            break;
 
-                    case "X":
-                        if (readCoordinates(line, "X")) {
-                            try {
+                        case "X":
+                            if (readCoordinates(line, "X")) {
                                 coordinates.setX(Float.parseFloat(line));
                                 validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-                        }
-                        break;
+                            break;
 
-                    case "Y":
-                        if (readCoordinates(line, "Y")) {
-                            try {
+                        case "Y":
+                            if (readCoordinates(line, "Y")) {
                                 coordinates.setY(Integer.parseInt(line));
                                 newMovie.setCoordinates(coordinates);
                                 validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
-                            }
-                        }
-                        break;
 
-                    case "oskarCount":
-                        if (readOscarAndLength(line)) {
-                            try {
+                            }
+                            break;
+
+                        case "oskarCount":
+                            if (readOscarAndLength(line)) {
                                 newMovie.setOscarsCount(Integer.parseInt(line));
                                 validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-                        }
-                        break;
+                            break;
 
-                    case "length":
-                        if (readOscarAndLength(line)) {
-                            try {
+                        case "length":
+                            if (readOscarAndLength(line)) {
                                 newMovie.setLength(Long.parseLong(line));
                                 validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-                        }
-                        break;
+                            break;
 
-                    case "genre":
-                        if (readEnum(line, "Genre")) {
-                            try {
+                        case "genre":
+                            if (readEnum(line, "Genre")) {
                                 newMovie.setGenre(MovieGenre.valueOf(line.toUpperCase()));
                                 validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-                        }
-                        break;
+                            break;
 
-                    case "rating":
-                        if (readEnum(line, "modules.MpaaRating")) {
-                            try {
-                                if (!line.isEmpty()) {
-                                    newMovie.setMpaaRating(MpaaRating.valueOf(line.toUpperCase()));
+                        case "rating":
+                            if (readEnum(line, "modules.MpaaRating")) {
+                                try {
+                                    if (!line.isEmpty()) {
+                                        newMovie.setMpaaRating(MpaaRating.valueOf(line.toUpperCase()));
+                                    }
+                                    validCommand = true;
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
                                 }
-                                validCommand = true;
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-                        }
-                        break;
+                            break;
 
-                    case "director":
-                        if (line.isEmpty()) {
-                            validCommand = true;
-                        } else if (line.equals("-")) {
-                            return newMovie;
-                        } else {
-                            System.out.println("Команда не распознана. Повторите ввод.");
-                        }
-                        break;
-                    case "directorName":
-                        try {
+                        case "director":
+                            if (line.isEmpty()) {
+                                validCommand = true;
+                            } else if (line.equals("-")) {
+                                return newMovie;
+                            } else {
+                                System.out.println("Команда не распознана. Повторите ввод.");
+                            }
+                            break;
+                        case "directorName":
                             director.setName(line);
                             validCommand = true;
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
-                        break;
+                            break;
 
-                    case "directorID":
-                        if (readDirectorID(line)) {
-                            try {
-                                director.setPassportID(line);
-                                validCommand = true;
-                                System.out.println("Введите локацию режиссера.");
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
+                        case "directorID":
+                            if (readDirectorID(line)) {
+                                try {
+                                    director.setPassportID(line);
+                                    validCommand = true;
+                                    System.out.println("Введите локацию режиссера.");
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                    case "directorLocationX":
-                        if (readCoordinates(line, "x")) {
-                            location.setX(Integer.parseInt(line));
+                        case "directorLocationX":
+                            if (readCoordinates(line, "x")) {
+                                location.setX(Integer.parseInt(line));
+                                validCommand = true;
+                            }
+                            break;
+
+                        case "directorLocationY":
+                            if (readCoordinates(line, "Y")) {
+                                location.setY(Long.parseLong(line));
+                                validCommand = true;
+                            }
+                            break;
+
+                        case "locationName":
+                            if (!line.isEmpty()) {
+                                location.setName(line);
+                            }
                             validCommand = true;
-                        }
-                        break;
-
-                    case "directorLocationY":
-                        if (readCoordinates(line, "Y")) {
-                            location.setY(Long.parseLong(line));
-                            validCommand = true;
-                        }
-                        break;
-
-                    case "locationName":
-                        if (!line.isEmpty()) {
-                            location.setName(line);
-                        }
-                        validCommand = true;
-                        director.setLocation(location);
-                        newMovie.setDirector(director);
-                        break;
+                            director.setLocation(location);
+                            newMovie.setDirector(director);
+                            break;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Неправильный формат ввода числа.");
+                }
+                catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         }
@@ -432,7 +380,7 @@ public class ConsoleManager {
             System.out.println(arg + " координата не может быть пустой");
             return false;
         } else {
-            System.out.println("Неправильный формат ввода. Координата " + arg + " не может быть строкой.");
+            System.out.println("Неправильный формат ввода координаты.");
             return false;
         }
     }
@@ -445,7 +393,7 @@ public class ConsoleManager {
             System.out.println("Неправильный формат ввода. Поле не может быть пустым.");
             return false;
         } else {
-            System.out.println("Неправильный формат ввода. Поле не может быть строкой.");
+            System.out.println("Неправильный формат ввода числа.");
             return false;
         }
     }

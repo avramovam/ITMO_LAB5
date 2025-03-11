@@ -163,8 +163,8 @@ public class CollectionManager {
         return movieCollection.stream().filter(movie -> movie.getGenre().compareTo(movieGenre) > 0).count();
     }
 
-    private final String dataFilePath = "src/app/movies.csv";// Путь к файлу с данными
-    private final String emergencyFilePath = "src/app/emergencies.csv"; // Путь для данных при аварийном завершении
+    private final String dataFilePath = "src/resources/movies.csv";// Путь к файлу с данными
+    private final String emergencyFilePath = "src/resources/emergencies.csv"; // Путь для данных при аварийном завершении
 
     public void saveDataToFile(String isEmergency) {
         String filePath;
@@ -178,6 +178,7 @@ public class CollectionManager {
                 writer.write(convertToCsv(movie));
                 writer.newLine();
             }
+            isCollectionModified = false;
             System.out.println("Коллекция успешно сохранена в файл");
         } catch (IOException e) {
             System.err.println("Ошибка при сохранении коллекции в файл: " + e.getMessage());

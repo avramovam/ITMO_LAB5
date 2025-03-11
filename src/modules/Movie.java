@@ -26,7 +26,7 @@ public class Movie implements Comparable<Movie>{
 
     @Override
     public String toString() {
-        return "modules.Movie{" +
+        return "Movie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", coordinates=" + coordinates +
@@ -75,7 +75,7 @@ public class Movie implements Comparable<Movie>{
 
     public void setName(String name) {
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Название фильма не может быть пустым. Повторите ввод.");
+            throw new IllegalArgumentException("Название фильма не может быть пустым.");
         }
         this.name = name;
     }

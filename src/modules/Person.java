@@ -35,14 +35,14 @@ public class Person {
 
     public void setLocation(Location location) {
         if (location == null) {
-            throw new IllegalArgumentException("modules.Location cannot be null");
+            throw new IllegalArgumentException("Локация не может быть null.");
         }
         this.location = location;
     }
 
     @Override
     public String toString() {
-        return "modules.Person{" +
+        return "Person{" +
                 "name='" + name + '\'' +
                 ", passportID='" + passportID + '\'' +
                 ", location=" + location +

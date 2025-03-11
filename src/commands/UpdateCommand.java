@@ -22,9 +22,7 @@ public class UpdateCommand implements Command {
                 return;
             }
             Long id = Long.parseLong(argument);
-            if (!collectionManager.getMovieCollection().removeIf(movie -> movie.getId().equals(id))) {
-                System.out.println("Фильм с таким ID не найден.");
-            } else {;
+            if (collectionManager.getMovieCollection().removeIf(movie -> movie.getId().equals(id))) {
                 Movie newMovie;
                 if (movieData != null && movieData.length > 0) {
                     newMovie = consoleManager.readMovieFromArguments(movieData);
@@ -33,6 +31,8 @@ public class UpdateCommand implements Command {
                 }
                 collectionManager.updateMovieById(id, newMovie);
                 System.out.println("Фильм с ID " + id + " обновлен");
+            } else {;
+                System.out.println("Фильм с таким ID не найден.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Некорректный формат ввода ID. Введите целое число");

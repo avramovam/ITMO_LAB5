@@ -1,5 +1,0 @@
-show
-update 5
-name, 104, 4, 56, 1, drama, g, , 12, 21, 1, nfejn, 1
-show
-execute_script /Users/macbook/Desktop/лабы/Java/Lab5/src/app/script2.txt

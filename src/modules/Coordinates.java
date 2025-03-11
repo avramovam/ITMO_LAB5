@@ -6,7 +6,7 @@ public class Coordinates {
 
     @Override
     public String toString() {
-        return "modules.Coordinates{" +
+        return "Coordinates{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';

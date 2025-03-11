@@ -1,0 +1,6 @@
+show
+update 5
+
+execute_script src/resources/script2.txt
+show
+
